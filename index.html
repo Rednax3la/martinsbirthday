@@ -721,6 +721,17 @@
     p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
     particleContainer.appendChild(p);
   }
+  // ========== SCROLL REVEAL ==========
+const revealCards = document.querySelectorAll('[data-reveal]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, idx) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), idx * 150);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealCards.forEach(card => observer.observe(card));
     // ========== CONFETTI ==========
   function launchConfetti(count = 80) {
     const container = document.getElementById('confetti');
