@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Martin 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-card: #111118;
+    --accent: #00ff88;
+    --accent-dim: #00ff8822;
+    --accent-mid: #00ff8866;
+    --warm: #ff6b35;
+    --warm-dim: #ff6b3522;
+    --text: #e8e8f0;
+    --text-dim: #6a6a80;
+    --border: #1e1e2e;
+    --terminal-green: #00ff88;
+    --glow: 0 0 40px #00ff8833, 0 0 80px #00ff8811;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-dim) var(--bg-deep);
+  }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ========== GRID BACKGROUND ========== */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ========== FLOATING PARTICLES ========== */
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  /* ========== MAIN CONTENT ========== */
+  .content {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ========== HERO SECTION ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid var(--accent-mid);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease both;
+    background: var(--accent-dim);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.95;
+    margin-bottom: 0.5rem;
+    animation: fadeInUp 1s ease both;
+    animation-delay: 0.3s;
+    opacity: 0;
+  }
+  .hero h1 .name {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), #00ccff, var(--accent));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 1s ease both, gradient-shift 4s ease infinite;
+    animation-delay: 0.5s;
+    opacity: 0;
+    filter: drop-shadow(0 0 30px var(--accent-dim));
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 1.5rem;
+    animation: fadeInUp 1s ease both;
+    animation-delay: 0.8s;
+    opacity: 0;
+  }
+
+  .cursor-blink::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+    color: var(--accent);
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeInUp 1s ease both, bob 2s ease-in-out infinite;
+    animation-delay: 1.5s;
+    opacity: 0;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+  .scroll-indicator .arrow {
+    width: 20px;
+    height: 20px;
+    border-right: 2px solid var(--accent-mid);
+    border-bottom: 2px solid var(--accent-mid);
+    transform: rotate(45deg);
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* ========== TERMINAL SECTION ========== */
+  section {
+    padding: 4rem 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-tag::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .terminal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    margin-top: 1rem;
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #0d0d14;
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green { background: #28c840; }
+  .terminal-title {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+  }
+
+  .terminal-body .prompt {
+    color: var(--accent);
+  }
+  .terminal-body .cmd {
+    color: var(--text);
+  }
+  .terminal-body .comment {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  .terminal-body .output {
+    color: #a0a0c0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+    margin: 0.5rem 0;
+  }
+  .terminal-body .warn {
+    color: var(--warm);
+  }
+
+  /* ========== MEMORIES TIMELINE ========== */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin-top: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--warm), var(--accent));
+  }
+
+  .memory-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.4s ease;
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  .memory-card.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .memory-card:hover {
+    border-color: var(--accent-mid);
+    box-shadow: var(--glow);
+    transform: translateX(4px);
+  }
+  .memory-card::before {
+    content: '';
+    position: absolute;
+    left: -2.35rem;
+    top: 1.5rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg-deep);
+    box-shadow: 0 0 10px var(--accent-mid);
+  }
+
+  .memory-era {
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .memory-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .memory-text {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* ========== BLESSING SECTION ========== */
+  .blessing-box {
+    background: linear-gradient(135deg, #0d1a12, #0a1520, #15101a);
+    border: 1px solid var(--accent-mid);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+  .blessing-box::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent), transparent, var(--warm), transparent, var(--accent));
+    z-index: -1;
+    animation: border-rotate 6s linear infinite;
+    background-size: 300% 300%;
+  }
+  @keyframes border-rotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .blessing-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, var(--accent), #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .blessing-text {
+    font-size: 0.9rem;
+    line-height: 2;
+    color: #c0c0d8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .blessing-text .highlight {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .blessing-text .swahili {
+    color: var(--warm);
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  /* ========== KONAMI CODE EASTER EGG ========== */
+  .easter-egg-hint {
+    text-align: center;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-top: 3rem;
+    letter-spacing: 2px;
+    opacity: 0.5;
+  }
+  .easter-egg-hint kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    margin: 0 1px;
+  }
+
+  /* ========== CONFETTI BURST ========== */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ========== MATRIX RAIN EASTER EGG ========== */
+  #matrix-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  #matrix-canvas.active {
+    opacity: 0.7;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    position: relative;
+    z-index: 2;
+  }
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  footer .version {
+    margin-top: 0.5rem;
+    font-size: 0.6rem;
+    opacity: 0.4;
+  }
+
+  /* ========== COMMIT LOG ========== */
+  .commit-log {
+    margin-top: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+  }
+  .commit {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .commit:last-child { border-bottom: none; }
+  .commit-hash {
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 70px;
+  }
+  .commit-msg {
+    color: var(--text);
+  }
+  .commit-date {
+    color: var(--text-dim);
+    margin-left: auto;
+    white-space: nowrap;
+    font-size: 0.65rem;
+  }
+
+  /* ========== INTERACTIVE CONSOLE ========== */
+  .console-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .console-input-wrap .prompt-sign {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+  #console-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    caret-color: var(--accent);
+  }
+  #console-input::placeholder {
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+  #console-output {
+    margin-top: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    min-height: 1.5rem;
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 600px) {
+    .terminal-body { font-size: 0.7rem; padding: 1rem; }
+    .blessing-box { padding: 2rem 1.2rem; }
+    .timeline { padding-left: 1.5rem; }
+    .commit { flex-wrap: wrap; }
+    .commit-date { margin-left: 0; margin-top: 0.3rem; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="noise-overlay"></div>
+<div class="particles" id="particles"></div>
+<canvas id="matrix-canvas"></canvas>
+<div class="confetti-container" id="confetti"></div>
+
+<div class="content">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="hero-badge">/// SYSTEM NOTIFICATION ///</div>
+    <h1>
+      Happy Birthday,
+      <span class="name">Martin.</span>
+    </h1>
+    <p class="hero-subtitle"><span class="cursor-blink">deploying birthday wishes to production</span></p>
+    <div class="scroll-indicator">
+      <span>SCROLL</span>
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <!-- ==================== BUILD LOG ==================== -->
+  <section>
+    <div class="section-tag">Build Log</div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">friendship.sh — bash</span>
+      </div>
+      <div class="terminal-body" id="typed-terminal">
+        <div><span class="prompt">$</span> <span class="cmd">git log --oneline --friendship-with=Martin</span></div>
+        <br>
+        <div class="output">
+          <span class="warn">⚠ WARNING:</span> Friendship history exceeds terminal buffer.<br>
+          Displaying abbreviated changelog...
+        </div>
+        <br>
+        <div class="commit-log">
+          <div class="commit">
+            <span class="commit-hash">a1b2c3d</span>
+            <span class="commit-msg">feat: met this guy in Primary School. no idea he'd stick around this long</span>
+            <span class="commit-date">~childhood</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">e4f5g6h</span>
+            <span class="commit-msg">fix: survived Tr Phillip's wrath together. battle-tested bond.</span>
+            <span class="commit-date">~primary</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">i7j8k9l</span>
+            <span class="commit-msg">fix: endured Zipporah's homework audits. incomplete = destruction.</span>
+            <span class="commit-date">~primary</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">m0n1o2p</span>
+            <span class="commit-msg">fix: got our asses handed to us by Gilbert. character development arc.</span>
+            <span class="commit-date">~primary</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">q3r4s5t</span>
+            <span class="commit-msg">feat: campus life unlocked. friendship.persist() returned true</span>
+            <span class="commit-date">~campus</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">u6v7w8x</span>
+            <span class="commit-msg">feat: started "making websites for our uncles" — revenue stream activated 💰</span>
+            <span class="commit-date">~campus</span>
+          </div>
+          <div class="commit">
+            <span class="commit-hash">y9z0a1b</span>
+            <span class="commit-msg">refactor: grew up. leveled up. still the same guys though.</span>
+            <span class="commit-date">~present</span>
+          </div>
+        </div>
+        <br>
+        <div><span class="prompt">$</span> <span class="cmd">echo "Happy Birthday, Martin 🎂"</span></div>
+        <div style="color: var(--accent); font-size: 1rem; margin-top: 0.5rem;">Happy Birthday, Martin 🎂</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MEMORIES ==================== -->
+  <section>
+    <div class="section-tag">Memory Timeline</div>
+    <div class="timeline">
+      <div class="memory-card" data-reveal>
+        <div class="memory-era">Primary School Era</div>
+        <div class="memory-title">The Battlefield</div>
+        <div class="memory-text">
+          We didn't just go to school together — we <em>survived</em> it together. Tr Phillip, Zipporah, Gilbert and the rest of the squad had us questioning our life choices every time homework was due. Incomplete work? That was a death sentence. But somehow, through all the beatings and the chaos, we came out the other side — tougher, closer, and with stories we'll never let each other forget.
+        </div>
+      </div>
+      <div class="memory-card" data-reveal>
+        <div class="memory-era">Campus Days</div>
+        <div class="memory-title">"Making Websites for Our Uncles"</div>
+        <div class="memory-text">
+          Campus hit different. The friendship didn't just survive — it evolved. And then came the legendary hustle: <strong>"making websites for our uncles."</strong> IYKYK. We were out here trying to secure the bag, building our empire one "uncle" at a time. The entrepreneurial spirit was real, even if the business model was... unconventional. 😂
+        </div>
+      </div>
+      <div class="memory-card" data-reveal>
+        <div class="memory-era">Present Day</div>
+        <div class="memory-title">Still Standing</div>
+        <div class="memory-text">
+          From primary school desks to real life — the bond never broke. Not every friendship survives the transitions, but this one did. Through every era, every chapter, every plot twist. And now here you are, another year wiser, still in tech, still building, still the same Martin from way back.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BLESSING ==================== -->
+  <section>
+    <div class="section-tag">The Blessing</div>
+    <div class="blessing-box">
+      <h2>A Blessing &amp; A Wish</h2>
+      <div class="blessing-text">
+        Martin, on this day, I pray that every line of code you write compiles on the first try. That every deploy goes to production without a single rollback. That your <span class="highlight">APIs never timeout</span>, your databases never corrupt, and your Wi-Fi never drops during a demo.<br><br>
+
+        But beyond the tech — I pray for abundance in your life. For doors that open before you even knock. For opportunities so big they scare you a little. For peace that doesn't make sense and joy that doesn't need a reason.<br><br>
+
+        I hope you achieve <em>so much</em> — <span class="swahili">mpaka ujishangae mwenyewe.</span><br><br>
+
+        Until you look back and can't believe that's really your life. Until your blessings have blessings. Until the kid who used to get beat for incomplete homework is now the one writing the syllabus.<br><br>
+
+        Happy Birthday, my guy. The best is literally still loading. <span class="highlight">█</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== INTERACTIVE CONSOLE ==================== -->
+  <section>
+    <div class="section-tag">Interactive Console</div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">martin-bday.sh — interactive</span>
+      </div>
+      <div class="terminal-body">
+        <div class="comment"># Try typing a command: help, wish, age++, deploy-cake, memories, status, fortune</div>
+        <div id="console-output"></div>
+        <div class="console-input-wrap">
+          <span class="prompt-sign">❯</span>
+          <input type="text" id="console-input" placeholder="type a command..." autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+    </div>
+    <div class="easter-egg-hint">
+      psst... tech guys know the Konami code →
+      <kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd><kbd>b</kbd><kbd>a</kbd>
+    </div>
+  </section>
+  <footer>
+    Built with love, nostalgia & a few merge conflicts ❤️<br>
+    <span class="version">friendship v∞.0.0 — no breaking changes since primary school</span>
+  </footer>
+ 
+</div>
+ 
+<script>
+  // ========== PARTICLES ==========
+  const particleContainer = document.getElementById('particles');
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (6 + Math.random() * 10) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+    particleContainer.appendChild(p);
+  }
+    // ========== CONFETTI ==========
+  function launchConfetti(count = 80) {
+    const container = document.getElementById('confetti');
+    const colors = ['#00ff88', '#00ccff', '#ff6b35', '#ff3366', '#ffcc00', '#aa66ff'];
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+      piece.style.animationDelay = Math.random() * 0.5 + 's';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.width = (6 + Math.random() * 8) + 'px';
+      piece.style.height = (6 + Math.random() * 8) + 'px';
+      container.appendChild(piece);
+      setTimeout(() => piece.remove(), 5000);
+    }
+  }
+  // Initial confetti on load
+  setTimeout(() => launchConfetti(60), 1500);
+ 
+  // ========== INTERACTIVE CONSOLE ==========
+  const input = document.getElementById('console-input');
+  const output = document.getElementById('console-output');
+ 
+  const responses = {
+    'help': `<span class="comment">Available commands:</span>
+  <span class="cmd">wish</span>        → Send Martin a birthday wish
+  <span class="cmd">age++</span>       → Increment Martin's age
+  <span class="cmd">deploy-cake</span> → Deploy birthday cake to production
+  <span class="cmd">memories</span>    → Random throwback memory
+  <span class="cmd">status</span>      → Check Martin's birthday status
+  <span class="cmd">fortune</span>     → Martin's birthday fortune
+  <span class="cmd">clear</span>       → Clear console
+  <span class="cmd">sudo rm -rf /age</span> → ???`,'wish': `<span style="color: var(--accent);">🎂 WISH DEPLOYED SUCCESSFULLY</span>
+  → Happy Birthday Martin! May your code be clean, your coffee strong, and your bugs minor.
+  → Status: 200 OK`,
+ 
+    'age++': `<span style="color: var(--warm);">martin.age++;</span>
+  → Age successfully incremented.
+  → <span class="comment">// Note: Martin.experience++ was also triggered automatically</span>
+  → <span class="comment">// Note: Martin.wisdom += random(10, 100)</span>
+  → Changelog: Got older. Got better. Same energy though.`,
+ 
+    'deploy-cake': `<span style="color: var(--accent);">🚀 Deploying cake to production...</span>
+  → Building layers.......... ✅
+  → Adding frosting........... ✅
+  → Lighting candles........... ✅
+  → Running taste tests........ ✅
+  → <span style="color: var(--accent);">DEPLOY SUCCESSFUL.</span> Cake is live. Make a wish! 🎂`,
+ 
+    'memories': () => {
+      const m = [
+        `💭 Remember when Tr Phillip caught us lacking on homework? The man showed no mercy. NONE.`,
+        `💭 Zipporah's class was basically a survival game. Incomplete homework = game over.`,
+        `💭 Gilbert really said "I will discipline the foolishness out of you" and meant every word.`,`💭 Campus days: "making websites for our uncles" — peak entrepreneurship. We were visionaries. 😂`,
+        `💭 The fact that we're still friends after all that trauma is honestly a miracle and a testimony.`,
+        `💭 Primary school built different. We didn't have therapy, we had each other. And beatings.`
+      ];
+      return m[Math.floor(Math.random() * m.length)];
+    },
+ 
+    'status': `<span style="color: var(--accent);">MARTIN STATUS CHECK:</span>
+  ┌─────────────────────────────────┐
+  │  Birthday:     ✅ TODAY!         │
+  │  Vibes:        ✅ Immaculate     │
+  │  Health:       ✅ 100%           │
+  │  Blessings:    ✅ Overflow       │
+  │  Hustle:       ✅ Never stops    │
+  │  Friendship:   ✅ Since day one  │
+  └─────────────────────────────────┘`,
+ 
+    'fortune': () => {
+      const f = [
+        `🔮 "In the next 365 days, Martin will achieve things mpaka ajishangae mwenyewe."`,
+        `🔮 "A mysterious PR will be merged into your life. It adds: wealth, peace, and more blessings."`,
+        `🔮 "Your next deploy will break nothing. Your next pitch will land everything."`,`🔮 "The kid who survived Tr Phillip will build things Tr Phillip reads about in the news."`,
+        `🔮 "Your future self just sent a commit message: 'trust the process, it gets crazy good.'"`,
+      ];
+      return f[Math.floor(Math.random() * f.length)];
+    },
+ 
+    'clear': '__CLEAR__',
+ 
+    'sudo rm -rf /age': `<span style="color: #ff3366;">Permission denied.</span>
+  → Nice try. Age is immutable. But wisdom? That's appendable.
+  → <span class="comment">// Martin will forever be young in spirit though ✨</span>`,
+  };
+ 
+  input.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const cmd = input.value.trim().toLowerCase();
+    input.value = '';
+    if (!cmd) return;
+ 
+    const echo = document.createElement('div');
+    echo.innerHTML = `<span class="prompt">❯</span> <span class="cmd">${cmd}</span>`;
+    output.appendChild(echo);let resp = responses[cmd];
+    if (!resp) {
+      resp = `<span style="color: var(--warm);">command not found:</span> ${cmd}\n  <span class="comment">Type 'help' for available commands</span>`;
+    }
+    if (resp === '__CLEAR__') {
+      output.innerHTML = '';
+      return;
+    }
+    if (typeof resp === 'function') resp = resp();
+ 
+    const respEl = document.createElement('div');
+    respEl.className = 'output';
+    respEl.style.whiteSpace = 'pre-wrap';
+    respEl.innerHTML = resp;
+    output.appendChild(respEl);
+ 
+    if (cmd === 'deploy-cake' || cmd === 'wish') launchConfetti(50);
+ 
+    output.scrollTop = output.scrollHeight;
+  });
+ 
+  // ========== KONAMI CODE ==========
+  const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let konamiIdx = 0;
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let matrixActive = false;document.addEventListener('keydown', (e) => {
+    if (e.key === konamiCode[konamiIdx]) {
+      konamiIdx++;
+      if (konamiIdx === konamiCode.length) {
+        konamiIdx = 0;
+        activateMatrix();
+      }
+    } else {
+      konamiIdx = 0;
+    }
+  });
+ 
+  function activateMatrix() {
+    if (matrixActive) return;
+    matrixActive = true;
+    canvas.classList.add('active');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    launchConfetti(150);
+ 
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+    const chars = 'HAPPYBIRTHDAYMARTIN🎂🎉🎊01'.split('');
+ 
+    let frames = 0;
+    const maxFrames = 200;
+ function draw() {
+      if (frames >= maxFrames) {
+        canvas.classList.remove('active');
+        matrixActive = false;
+        return;
+      }
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff88';
+      ctx.font = fontSize + 'px JetBrains Mono';
+ 
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      frames++;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+    // ========== AUTO-FOCUS CONSOLE ON SCROLL ==========
+  const consoleSection = document.querySelector('#console-input');
+  const consoleObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) consoleSection.focus();
+  }, { threshold: 0.5 });
+  consoleObserver.observe(consoleSection);
+</script>
+</body>
+</html>
